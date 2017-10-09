@@ -1,0 +1,3 @@
+["resources/config.edn"
+ "resources/dev.edn"
+ "~/.private/instructions-server/config.edn"]

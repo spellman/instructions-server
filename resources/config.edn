@@ -1,0 +1,6 @@
+{:database {:adapter "postgresql"
+            :database-name #immuconf/override "Specify the database name here."
+            :server-name #immuconf/override "Specify the database host here."
+            :port-number #immuconf/override "Specify the database port here."
+            :username #immuconf/override "Specify the database user here."
+            :password #immuconf/override "Specify the database password here. See ./.immuconf.edn for expected file location. Do NOT check the config file with credentials into source control."}}

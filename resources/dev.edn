@@ -1,0 +1,4 @@
+{:database {:database-name "instructions_server_dev"
+            :server-name "localhost"
+            :port-number 5432
+            :username "postgres"}}
