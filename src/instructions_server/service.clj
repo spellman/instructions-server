@@ -372,10 +372,3 @@ VALUES
                                         ;:key-password "password"
                                         ;:ssl-port 8443
                                         :ssl? false}})
-
-
-
-(comment
-  (require '[clojure.spec.test.alpha :as stest])
-  (stest/instrument)
-  )

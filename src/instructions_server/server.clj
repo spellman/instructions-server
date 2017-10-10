@@ -1,5 +1,5 @@
 (ns instructions-server.server
-  (:gen-class) ; for -main method in uberjar
+  (:gen-class)
   (:require [clojure.edn :as edn]
             [clojure.java.io :as io]
             [clojure.string :as string]
@@ -9,30 +9,6 @@
             [integrant.core :as ig]
             [hikari-cp.core :as db-pool]
             [instructions-server.service :as service]))
-
-;; This is an adapted service map, that can be started and stopped
-;; From the REPL you can call server/start and server/stop on this service
-#_(defonce runnable-service (server/create-server service/service))
-
-#_(defn run-dev
-  "The entry-point for 'lein run-dev'"
-  [& args]
-  (println "\nCreating your [DEV] server...")
-  (-> service/service ;; start with production configuration
-      (merge {:env :dev
-              ::server/port 3000
-              ;; do not block thread that starts web server
-              ::server/join? false
-              ;; Routes can be a function that resolve routes,
-              ;;  we can use this to set the routes to be reloadable
-              ::server/routes #(route/expand-routes (deref #'service/routes))
-              ;; all origins are allowed in dev mode
-              ::server/allowed-origins {:creds true :allowed-origins (constantly true)}})
-      ;; Wire up interceptor chains
-      server/default-interceptors
-      server/dev-interceptors
-      server/create-server
-      server/start))
 
 (def cfg
   (->> ".immuconf.edn"
@@ -67,7 +43,6 @@
         (server/start))))
 
 (defmethod ig/halt-key! ::service/service [_ service-map]
-  ;; TODO: Ensure this fn is idempotent.
   (server/stop service-map))
 
 (defmethod ig/init-key ::service/database [_ db-spec]
@@ -77,27 +52,6 @@
   (db-pool/close-datasource datasource))
 
 (defn -main
-  "The entry-point for 'lein run'"
   [& args]
   (println "\nCreating your server...")
   (ig/init config))
-
-;; If you package the service up as a WAR,
-;; some form of the following function sections is required (for io.pedestal.servlet.ClojureVarServlet).
-
-;;(defonce servlet  (atom nil))
-;;
-;;(defn servlet-init
-;;  [_ config]
-;;  ;; Initialize your app here.
-;;  (reset! servlet  (server/servlet-init service/service nil)))
-;;
-;;(defn servlet-service
-;;  [_ request response]
-;;  (server/servlet-service @servlet request response))
-;;
-;;(defn servlet-destroy
-;;  [_]
-;;  (server/servlet-destroy @servlet)
-;;  (reset! servlet nil))
-
